@@ -184,9 +184,8 @@
 <body>
   <nav>
     <div class="nav-inner">
-      <a class="nav-logo" href="index.html">👑 WBQD</a>
+      <a class="nav-logo active" href="index.html">👑 WBQD</a>
       <div class="nav-links">
-        <a href="index.html" class="active">Home</a>
         <a href="red-flag.html">🚩 Red Flag</a>
         <a href="liebesbriefe.html">💌 Liebesbriefe</a>
         <a href="glow-up.html">✨ Glow-Up</a>
@@ -287,6 +286,17 @@
       </div>
     </section>
 
+    <!-- QR Codes -->
+    <section class="mt-40">
+      <div class="section-header">
+        <span class="badge badge-teal">Quick Links</span>
+        <h2 class="mt-8">QR Codes zum Scannen</h2>
+        <div class="divider"></div>
+        <p>Einfach mit dem Handy scannen und direkt loslegen.</p>
+      </div>
+      <div class="grid-2" style="max-width:700px; margin: 32px auto 0;" id="qrGrid"></div>
+    </section>
+
     <!-- Quote -->
     <div class="quote-banner">
       <blockquote>
@@ -320,6 +330,44 @@
     }
 
     launchConfetti();
+
+    // ── QR Codes ──
+    function buildQRCodes() {
+      const base = window.location.origin + window.location.pathname.replace('index.html', '').replace(/\/$/, '');
+      const homeURL = base + '/index.html';
+      const liebeURL = base + '/liebesbriefe.html';
+
+      const qrs = [
+        {
+          label: '👑 Startseite',
+          desc: 'Direkt zur Party-Übersicht',
+          url: homeURL,
+          color: 'FF2D8B'
+        },
+        {
+          label: '💌 Liebesbriefe',
+          desc: 'Satz eingeben für Dajenne',
+          url: liebeURL,
+          color: '00F5D4'
+        }
+      ];
+
+      document.getElementById('qrGrid').innerHTML = qrs.map(q => {
+        const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&bgcolor=1A0533&color=${q.color}&data=${encodeURIComponent(q.url)}&qzone=2`;
+        return `
+          <div class="card card-gold" style="text-align:center; padding: 28px 20px;">
+            <p style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:2px; color:var(--gold); margin-bottom:4px;">${q.label}</p>
+            <p style="font-size:0.78rem; color:rgba(255,255,255,0.5); margin-bottom:16px;">${q.desc}</p>
+            <div style="background:rgba(26,5,51,0.9); border-radius:16px; padding:12px; display:inline-block; border:2px solid rgba(255,215,0,0.3);">
+              <img src="${qrSrc}" alt="QR Code ${q.label}" width="150" height="150" style="display:block; border-radius:8px;">
+            </div>
+            <p style="margin-top:12px; font-size:0.65rem; color:rgba(255,255,255,0.25); word-break:break-all; max-width:200px; margin-left:auto; margin-right:auto;">${q.url}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    buildQRCodes();
   </script>
 </body>
 </html>
