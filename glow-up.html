@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Glow-Up Wall – WBQD</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Print styles ── */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; }
+      body::before, body::after { display: none !important; }
+      nav { display: none !important; }
+      .print-hint { display: none !important; }
+      .cards-print-area { display: block !important; }
+      .card-a5-wrap {
+        page-break-after: always;
+        break-after: page;
+      }
+      .card-a5-wrap:last-child {
+        page-break-after: avoid;
+      }
+    }
+
+    /* ── Screen preview ── */
+    .cards-print-area {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    /* The actual card – DIN A5 ratio 148×210mm ≈ 1:√2 */
+    .card-a5 {
+      background: white;
+      color: #111;
+      border-radius: 16px;
+      padding: 32px 28px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .card-a5-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 3px solid;
+      margin-bottom: 20px;
+    }
+
+    .card-a5-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .card-a5-kategorie {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .card-a5-to {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.5;
+      margin-bottom: 4px;
+    }
+
+    .card-a5-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1.5px;
+      opacity: 0.7;
+    }
+
+    /* Write-on area – lined */
+    .write-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 8px;
+    }
+
+    .write-line {
+      flex: 1;
+      border-bottom: 1.5px solid;
+      min-height: 32px;
+    }
+
+    .card-a5-footer {
+      margin-top: 16px;
+      font-size: 0.65rem;
+      text-align: center;
+      opacity: 0.35;
+      font-style: italic;
+    }
+
+    /* Color themes per category */
+    .theme-erinnerung { --c: #E91E63; }
+    .theme-eigenschaft { --c: #9C27B0; }
+    .theme-staerke { --c: #FF6F00; }
+    .theme-schoenheit { --c: #2196F3; }
+    .theme-freundschaft { --c: #4CAF50; }
+    .theme-mut { --c: #F44336; }
+    .theme-zukunft { --c: #00BCD4; }
+    .theme-wertschaetzung { --c: #FF9800; }
+    .theme-lachen { --c: #8BC34A; }
+
+    .card-a5-header { border-color: var(--c); }
+    .card-a5-kategorie { color: var(--c); }
+    .write-line { border-color: rgba(0,0,0,0.12); }
+
+    .card-a5-wrap { position: relative; }
+
+    /* Print count badge */
+    .print-count {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--pink);
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    @media print {
+      .print-count { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="no-print">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">👑 WBQD</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="red-flag.html">🚩 Red Flag</a>
+        <a href="liebesbriefe.html">💌 Liebesbriefe</a>
+        <a href="glow-up.html" class="active">✨ Glow-Up</a>
+        <a href="bingo.html">🎱 Bingo</a>
+        <a href="wuensche.html">🌟 Wünsche</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="section-header no-print">
+      <span class="badge badge-gold">Aktivität 03</span>
+      <h1 class="mt-8 gradient-text">Glow-Up Wall</h1>
+      <div class="divider"></div>
+      <p>Druckt die Karten aus, beschriftet sie von Hand und lest sie Dajenne vor. 💛</p>
+    </div>
+
+    <!-- Anleitung -->
+    <div class="card no-print" style="max-width:680px; margin: 0 auto 32px;">
+      <h3>📋 So geht's</h3>
+      <ol style="margin-top:14px; padding-left:20px; display:flex; flex-direction:column; gap:10px; color:rgba(255,255,255,0.8); font-size:0.9rem; line-height:1.5;">
+        <li>Druckt alle Karten aus (am besten auf stabileres Papier oder Karton).</li>
+        <li>Jede Freundin wählt eine oder mehrere Karten aus und schreibt in ihrer eigenen Handschrift einen Satz für Dajenne auf die Linien.</li>
+        <li>Auf der Party liest jede ihre Karte laut vor — dann überreicht sie Dajenne.</li>
+        <li>Dajenne kann die Karten als Erinnerung behalten. 💛</li>
+      </ol>
+      <p style="margin-top:16px; font-size:0.8rem; color:rgba(255,255,255,0.45); font-style:italic;">
+        Tipp: Die Kategorie oben gibt einen thematischen Hinweis — aber ihr könnt natürlich alles schreiben was euch einfällt!
+      </p>
+    </div>
+
+    <!-- Print hint + button -->
+    <div class="print-hint no-print" style="text-align:center; margin-bottom:24px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="window.print()">🖨️ Alle Karten drucken</button>
+      <a href="bingo.html" class="btn btn-outline">Weiter zu Bingo 🎱</a>
+    </div>
+
+    <!-- 9 Karten, 3 pro Kategorie-Gruppe = 9 Stück (3 Karten × 3 Motive) -->
+    <div class="cards-print-area" id="cardsArea"></div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    checkAuth();
+
+    const KARTEN = [
+      { theme: 'erinnerung',    icon: '📸', kategorie: 'Erinnerung',     zeilen: 5 },
+      { theme: 'eigenschaft',   icon: '💜', kategorie: 'Eigenschaft',    zeilen: 5 },
+      { theme: 'staerke',       icon: '💪', kategorie: 'Stärke',         zeilen: 5 },
+      { theme: 'schoenheit',    icon: '✨', kategorie: 'Schönheit',      zeilen: 5 },
+      { theme: 'freundschaft',  icon: '🌸', kategorie: 'Freundschaft',   zeilen: 5 },
+      { theme: 'mut',           icon: '🔥', kategorie: 'Mut & Courage',  zeilen: 5 },
+      { theme: 'zukunft',       icon: '⭐', kategorie: 'Zukunft',        zeilen: 5 },
+      { theme: 'wertschaetzung',icon: '💛', kategorie: 'Wertschätzung',  zeilen: 5 },
+      { theme: 'lachen',        icon: '😂', kategorie: 'Lachen & Spaß',  zeilen: 5 },
+    ];
+
+    function buildCards() {
+      const area = document.getElementById('cardsArea');
+      area.innerHTML = KARTEN.map((k, i) => `
+        <div class="card-a5-wrap">
+          <div class="print-count">${i + 1}</div>
+          <div class="card-a5 theme-${k.theme}">
+            <div class="card-a5-header">
+              <span class="card-a5-icon">${k.icon}</span>
+              <div>
+                <div class="card-a5-kategorie">${k.kategorie}</div>
+              </div>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <div class="card-a5-to">Für</div>
+              <div class="card-a5-name">Dajenne 👑</div>
+            </div>
+            <div class="write-area">
+              ${Array(k.zeilen).fill('<div class="write-line"></div>').join('')}
+            </div>
+            <div class="card-a5-footer">Welcome Back Queen Dajenne — mit Liebe von deinen Freundinnen ✨</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    buildCards();
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+const RED_FLAGS = [
+  "Er sagt dir, du bist 'zu empfindlich', wenn dich etwas verletzt.",
+  "Er kommentiert das Aussehen anderer Frauen vor dir.",
+  "Er lässt dich absichtlich auf Antworten warten.",
+  "Er zweifelt deine Wahrnehmung von Ereignissen an ('Das war doch gar nicht so').",
+  "Er wird still und kalt, wenn er wütend ist, statt mit dir zu reden.",
+  "Er macht dich runter, verpackt es aber als 'Witz' oder 'War doch nur Spaß'.",
+  "Er checkt dein Handy oder Soziale Medien ohne zu fragen.",
+  "Er macht dich vor seinen Freunden oder deinen schlechter.",
+  "Er entschuldigt sich nie wirklich – immer nur 'Tut mir leid, WENN dich das gestört hat'.",
+  "Er hält dich von Treffen mit Freundinnen ab oder macht schlechte Laune deswegen.",
+  "Er vergleicht dich mit seinen Ex-Freundinnen.",
+  "Er erinnert dich bei Streit an alles, was du jemals falsch gemacht hast.",
+  "Er sagt dir, was du anziehen sollst oder kritisiert dein Outfit.",
+  "Er lässt dich für seine schlechte Laune büßen, obwohl du nichts getan hast.",
+  "Er lobt dich nur, wenn du etwas für ihn tust.",
+  "Er redet über seine Probleme stundenlang, fragt aber nie nach deinen.",
+  "Er nimmt Entschuldigungen von dir an, ohne selbst welche zu machen.",
+  "Er sagt 'Niemand sonst würde das bei dir tolerieren'.",
+  "Er ist super nett vor anderen, aber ganz anders wenn ihr allein seid.",
+  "Er nennt dich 'verrückt' oder 'dramatisch' wenn du Gefühle äußerst."
+];

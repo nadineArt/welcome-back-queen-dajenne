@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌟 Goldene Zukunft – WBQD</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Intro ── */
+    .intro {
+      text-align: center;
+      padding: 40px 0 32px;
+    }
+
+    /* ── Stichwort-Karte ── */
+    .stichwort-stage {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .stichwort-card {
+      background: linear-gradient(135deg, rgba(45,10,92,0.95), rgba(10,26,46,0.95));
+      border: 2px solid rgba(255,215,0,0.5);
+      border-radius: 32px;
+      padding: 56px 40px;
+      text-align: center;
+      box-shadow: var(--glow-gold), 0 20px 60px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stichwort-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-number {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      color: rgba(255,215,0,0.4);
+      letter-spacing: 2px;
+    }
+
+    .stichwort-icon {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 16px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .stichwort-word {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 10vw, 6rem);
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--gold), #FFF176, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .stichwort-frage {
+      margin-top: 20px;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: rgba(255,255,255,0.75);
+      font-style: italic;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
+    }
+
+    .thinking-prompt {
+      margin-top: 24px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: var(--teal);
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .counter-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 2px;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    /* ── Progress ── */
+    .progress-track {
+      max-width: 700px;
+      margin: 28px auto 0;
+    }
+
+    .progress-bar-bg {
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #FFF176);
+      border-radius: 50px;
+      transition: width 0.6s ease;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .pdot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .pdot.done { background: var(--gold); box-shadow: 0 0 8px rgba(255,215,0,0.5); }
+    .pdot.active { background: white; transform: scale(1.3); }
+
+    /* ── Finale ── */
+    .finale {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+      animation: slide-in-up 0.8s ease forwards;
+    }
+
+    .finale-icon {
+      font-size: 6rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .finale-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      background: linear-gradient(135deg, var(--gold), var(--pink), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 16px 0 8px;
+    }
+
+    .finale-sub {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: var(--gold);
+      margin-bottom: 32px;
+    }
+
+    .recap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      max-width: 700px;
+      margin: 0 auto 32px;
+    }
+
+    .recap-item {
+      background: rgba(255,215,0,0.08);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 14px;
+      padding: 16px 10px;
+      text-align: center;
+    }
+
+    .recap-icon { font-size: 1.8rem; }
+    .recap-word { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--gold); letter-spacing: 1px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">👑 WBQD</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="red-flag.html">🚩 Red Flag</a>
+        <a href="liebesbriefe.html">💌 Liebesbriefe</a>
+        <a href="glow-up.html">✨ Glow-Up</a>
+        <a href="bingo.html">🎱 Bingo</a>
+        <a href="wuensche.html" class="active">🌟 Wünsche</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="confetti-container"></div>
+
+  <div class="page-wrapper">
+
+    <!-- ── Intro ── -->
+    <div id="sectionIntro">
+      <div class="intro">
+        <span class="badge badge-gold">Finale 05</span>
+        <h1 class="mt-8 gradient-text">Goldene<br>Zukunft</h1>
+        <div class="divider"></div>
+        <p style="max-width:520px; margin:0 auto; color:rgba(255,255,255,0.7); line-height:1.7;">
+          10 Stichwörter. Dajenne äußert zu jedem live ihren ganz persönlichen Wunsch für die Zukunft.
+          <br>
+          <span class="handwriting" style="font-size:1.1rem;">Das ist ihr Moment. 🌟</span>
+        </p>
+        <div style="margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-gold" onclick="startWuensche()">Starten ✨</button>
+          <a href="index.html" class="btn btn-outline">← Zurück</a>
+        </div>
+
+        <div class="card card-gold" style="max-width:580px; margin: 32px auto 0; text-align:left;">
+          <h3>📋 So läuft es ab</h3>
+          <ol style="margin-top:12px; padding-left:20px; display:flex; flex-direction:column; gap:8px; color:rgba(255,255,255,0.8); font-size:0.88rem; line-height:1.5;">
+            <li>Ich zeige nacheinander 10 Stichwörter auf dem Bildschirm.</li>
+            <li>Dajenne sagt zu jedem Stichwort laut, was sie sich für ihre Zukunft wünscht.</li>
+            <li>Keine falschen Antworten — es sind <em>ihre</em> Wünsche. 💛</li>
+            <li>Am Ende gibt es eine goldene Zusammenfassung für alle.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Spiel ── -->
+    <div id="sectionSpiel" style="display:none; padding: 40px 0;">
+      <div class="stichwort-stage">
+        <div class="stichwort-card" id="stichwortCard">
+          <span class="card-number" id="cardNum">1 / 10</span>
+          <span class="stichwort-icon" id="stichwortIcon">💕</span>
+          <div class="stichwort-word" id="stichwortWord">LIEBE</div>
+          <p class="stichwort-frage" id="stichwortFrage">Was wünschst du dir in Sachen Liebe?</p>
+          <p class="thinking-prompt">Dajenne — was denkst du? 💭</p>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-outline" id="btnPrev" onclick="prevCard()" style="display:none;">← Zurück</button>
+          <span class="counter-text" id="counterText">1 / 10</span>
+          <button class="btn btn-gold" id="btnWeiter" onclick="nextCard()">Weiter →</button>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill" style="width:10%;"></div>
+          </div>
+          <div class="progress-dots" id="progressDots"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Finale ── -->
+    <div class="finale" id="sectionFinale">
+      <div class="finale-icon">🌟</div>
+      <div class="finale-title">Das ist<br>deine Zukunft</div>
+      <p class="finale-sub">Und sie gehört ganz dir, Dajenne.</p>
+
+      <div class="recap-grid" id="recapGrid"></div>
+
+      <div class="card card-gold" style="max-width:560px; margin: 0 auto 32px; text-align:center;">
+        <p style="font-family:'Dancing Script',cursive; font-size:1.5rem; color:var(--gold); line-height:1.5;">
+          "Du bist frei. Du bist stark. Du bist geliebt.<br>Und das Beste kommt noch."
+        </p>
+        <p style="margin-top: 12px; font-size:0.85rem; color:rgba(255,255,255,0.5);">— Deine Freundinnen, für immer ❤️</p>
+      </div>
+
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="launchConfetti()">🎉 Feiern!</button>
+        <a href="index.html" class="btn btn-gold">👑 Zur Startseite</a>
+        <button class="btn btn-outline" onclick="resetWuensche()">Nochmal</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="data/wuensche.js"></script>
+  <script>
+    checkAuth();
+
+    let current = 0;
+
+    function startWuensche() {
+      document.getElementById('sectionIntro').style.display = 'none';
+      document.getElementById('sectionSpiel').style.display = 'block';
+      renderDots();
+      showCard(0);
+    }
+
+    function renderDots() {
+      document.getElementById('progressDots').innerHTML =
+        WUNSCH_STICHWOERTER.map((_, i) =>
+          `<div class="pdot ${i === 0 ? 'active' : ''}" id="dot-${i}" onclick="goToCard(${i})"></div>`
+        ).join('');
+    }
+
+    function showCard(idx) {
+      const w = WUNSCH_STICHWOERTER[idx];
+      document.getElementById('cardNum').textContent = (idx+1) + ' / ' + WUNSCH_STICHWOERTER.length;
+      document.getElementById('stichwortIcon').textContent = w.icon;
+      document.getElementById('stichwortWord').textContent = w.stichwort.toUpperCase();
+      document.getElementById('stichwortFrage').textContent = w.frage;
+      document.getElementById('counterText').textContent = (idx+1) + ' / ' + WUNSCH_STICHWOERTER.length;
+
+      const pct = ((idx+1) / WUNSCH_STICHWOERTER.length) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+
+      document.querySelectorAll('.pdot').forEach((d,i) => {
+        d.classList.remove('active','done');
+        if (i < idx) d.classList.add('done');
+        if (i === idx) d.classList.add('active');
+      });
+
+      document.getElementById('btnPrev').style.display = idx > 0 ? 'inline-flex' : 'none';
+
+      const isLast = idx >= WUNSCH_STICHWOERTER.length - 1;
+      const nextBtn = document.getElementById('btnWeiter');
+      nextBtn.textContent = isLast ? 'Auswertung ✨' : 'Weiter →';
+      nextBtn.className = isLast ? 'btn btn-primary' : 'btn btn-gold';
+
+      // Animate card
+      const card = document.getElementById('stichwortCard');
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    function nextCard() {
+      if (current >= WUNSCH_STICHWOERTER.length - 1) {
+        showFinale();
+      } else {
+        current++;
+        showCard(current);
+      }
+    }
+
+    function prevCard() {
+      if (current > 0) {
+        current--;
+        showCard(current);
+      }
+    }
+
+    function goToCard(idx) {
+      current = idx;
+      showCard(idx);
+    }
+
+    function showFinale() {
+      document.getElementById('sectionSpiel').style.display = 'none';
+      const finale = document.getElementById('sectionFinale');
+      finale.style.display = 'block';
+
+      const recapGrid = document.getElementById('recapGrid');
+      recapGrid.innerHTML = WUNSCH_STICHWOERTER.map(w => `
+        <div class="recap-item">
+          <div class="recap-icon">${w.icon}</div>
+          <div class="recap-word">${w.stichwort}</div>
+        </div>
+      `).join('');
+
+      launchConfetti();
+      finale.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetWuensche() {
+      current = 0;
+      document.getElementById('sectionFinale').style.display = 'none';
+      document.getElementById('sectionIntro').style.display = 'block';
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#FFD700','#FF2D8B','#00F5D4','#FFFFFF','#FFF176'];
+      for (let i = 0; i < 120; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.width = (Math.random() * 10 + 4) + 'px';
+        piece.style.height = piece.style.width;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        piece.style.animationDelay = (Math.random() * 2) + 's';
+        container.appendChild(piece);
+        piece.addEventListener('animationend', () => piece.remove());
+      }
+    }
+  </script>
+</body>
+</html>

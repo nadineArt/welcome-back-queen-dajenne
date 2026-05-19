@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚩 Red Flag Roulette – WBQD</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .game-screen { display: none; }
+    .game-screen.active { display: block; }
+
+    /* Intro */
+    .intro { text-align: center; padding: 40px 0; }
+    .intro h1 { text-transform: uppercase; }
+    .rules-list {
+      list-style: none;
+      max-width: 540px;
+      margin: 24px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .rules-list li {
+      background: rgba(255,23,68,0.1);
+      border: 1px solid rgba(255,23,68,0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.85);
+      text-align: left;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    /* Game card */
+    .statement-card {
+      background: linear-gradient(135deg, rgba(45,10,92,0.9), rgba(10,26,46,0.9));
+      border: 2px solid rgba(255,23,68,0.5);
+      border-radius: 24px;
+      padding: 40px 32px;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: 0 0 40px rgba(255,23,68,0.2);
+    }
+
+    .statement-number {
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 16px;
+    }
+
+    .statement-text {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .flag-prompt {
+      margin-top: 24px;
+      font-size: 1.1rem;
+      color: var(--gold);
+      font-family: 'Dancing Script', cursive;
+    }
+
+    /* Counter */
+    .counter-section {
+      max-width: 500px;
+      margin: 32px auto 0;
+      text-align: center;
+    }
+
+    .counter-label {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .counter-display {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem;
+      color: var(--red-flag);
+      text-shadow: 0 0 30px rgba(255,23,68,0.8);
+      line-height: 1;
+    }
+
+    .counter-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .counter-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .counter-btn.plus {
+      background: var(--red-flag);
+      color: white;
+      box-shadow: 0 0 20px rgba(255,23,68,0.5);
+    }
+
+    .counter-btn.minus {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .counter-btn:hover { transform: scale(1.1); }
+    .counter-btn:active { transform: scale(0.95); }
+
+    /* Ex confirm */
+    .ex-confirm {
+      max-width: 500px;
+      margin: 24px auto 0;
+      text-align: center;
+    }
+
+    .ex-question {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 14px;
+    }
+
+    .ex-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .ex-btn {
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: 2px solid;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: white;
+    }
+
+    .ex-btn.ja {
+      border-color: var(--red-flag);
+      color: var(--red-flag);
+    }
+
+    .ex-btn.ja:hover, .ex-btn.ja.selected {
+      background: var(--red-flag);
+      color: white;
+      box-shadow: 0 0 20px rgba(255,23,68,0.6);
+    }
+
+    .ex-btn.nein {
+      border-color: rgba(0,245,212,0.6);
+      color: var(--teal);
+    }
+
+    .ex-btn.nein:hover, .ex-btn.nein.selected {
+      background: rgba(0,245,212,0.2);
+      box-shadow: 0 0 20px rgba(0,245,212,0.3);
+    }
+
+    /* Score bar */
+    .score-bar {
+      max-width: 500px;
+      margin: 24px auto 0;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      height: 12px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--pink), var(--red-flag));
+      border-radius: 50px;
+      transition: width 0.5s ease;
+    }
+
+    .score-info {
+      display: flex;
+      justify-content: space-between;
+      max-width: 500px;
+      margin: 8px auto 0;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Navigation buttons */
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    /* Flag animation overlay */
+    .flag-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 500;
+    }
+
+    .big-flag {
+      font-size: 10rem;
+      opacity: 0;
+      animation: flag-fly-in 1.2s ease forwards;
+    }
+
+    /* Result screen */
+    .result-screen { text-align: center; padding: 40px 0; }
+
+    .result-score-big {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 15vw, 9rem);
+      background: linear-gradient(135deg, var(--red-flag), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .result-verdict {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      color: var(--gold);
+      margin-top: 12px;
+    }
+
+    .result-flags {
+      font-size: 2rem;
+      margin-top: 16px;
+      letter-spacing: 4px;
+    }
+
+    .verdict-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">👑 WBQD</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="red-flag.html" class="active">🚩 Red Flag</a>
+        <a href="liebesbriefe.html">💌 Liebesbriefe</a>
+        <a href="glow-up.html">✨ Glow-Up</a>
+        <a href="bingo.html">🎱 Bingo</a>
+        <a href="wuensche.html">🌟 Wünsche</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="confetti-container"></div>
+  <div class="flag-overlay" id="flagOverlay"></div>
+
+  <div class="page-wrapper">
+
+    <!-- ── SCREEN 1: Intro ── -->
+    <div class="game-screen active" id="screenIntro">
+      <div class="intro">
+        <span class="badge badge-red">Spiel 01</span>
+        <h1 class="mt-8 gradient-text">Red Flag<br>Roulette</h1>
+        <div class="divider"></div>
+        <p style="color:rgba(255,255,255,0.7); margin: 0 auto; max-width: 500px; line-height: 1.6;">
+          Wie viele Red Flags hatte "dein Ex"? Findet es raus!
+        </p>
+        <ul class="rules-list mt-16">
+          <li><span>🚩</span><span>Ich lese eine Aussage vor. Alle, die denken das ist eine <strong>Red Flag</strong>, heben ihr rotes Fähnchen.</span></li>
+          <li><span>👁️</span><span>Ich zähle, wie viele Fähnchen oben sind und tippe die Zahl ein.</span></li>
+          <li><span>🎯</span><span>Dajenne sagt: Trifft das auf deinen Ex zu — ja oder nein?</span></li>
+          <li><span>📊</span><span>Wenn die <strong>Mehrheit</strong> es als Red Flag sieht UND Dajenne sagt Ja → Punkt!</span></li>
+          <li><span>🏆</span><span>Am Ende sehen wir, wie viele Red Flags "dein Ex" insgesamt hatte.</span></li>
+        </ul>
+        <div style="margin-top: 32px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="startGame()">Spiel starten 🚩</button>
+          <a href="index.html" class="btn btn-outline">← Zurück</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: Game ── -->
+    <div class="game-screen" id="screenGame">
+      <div class="section-header" style="margin-bottom:24px;">
+        <span class="badge badge-red" id="progressBadge">Aussage 1 / 20</span>
+      </div>
+
+      <div class="statement-card">
+        <p class="statement-number" id="stmtNum">01 / 20</p>
+        <p class="statement-text" id="stmtText">Lade...</p>
+        <p class="flag-prompt">🚩 Hebt eure Fähnchen wenn ihr das als Red Flag seht!</p>
+      </div>
+
+      <!-- Fähnchen-Zähler -->
+      <div class="counter-section">
+        <p class="counter-label">Wie viele Fähnchen wurden gehoben?</p>
+        <div class="counter-display" id="flagCount">0</div>
+        <div class="counter-buttons">
+          <button class="counter-btn minus" onclick="changeCount(-1)">−</button>
+          <button class="counter-btn plus" onclick="changeCount(1)">+</button>
+        </div>
+        <p style="margin-top:8px; font-size:0.8rem; color:rgba(255,255,255,0.4);">
+          Mehrheit = mehr als <span id="majorityNum">6</span> von 12 Fähnchen
+        </p>
+      </div>
+
+      <!-- Dajenne's Antwort -->
+      <div class="ex-confirm" id="exConfirmSection" style="display:none;">
+        <p class="ex-question">Dajenne — trifft das auf deinen Ex zu?</p>
+        <div class="ex-buttons">
+          <button class="ex-btn ja" id="btnJa" onclick="setExAnswer(true)">Ja 🙋‍♀️</button>
+          <button class="ex-btn nein" id="btnNein" onclick="setExAnswer(false)">Nein 🙅‍♀️</button>
+        </div>
+      </div>
+
+      <!-- Score -->
+      <div class="score-bar" style="margin-top:32px;">
+        <div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div>
+      </div>
+      <div class="score-info">
+        <span>Red Flags gesammelt: <strong id="scoreDisplay">0</strong></span>
+        <span>von 20 möglichen</span>
+      </div>
+
+      <!-- Buttons -->
+      <div class="nav-buttons">
+        <button class="btn btn-outline" id="btnShowEx" onclick="showExQuestion()" style="display:none;">
+          Jetzt Dajenne fragen 🎯
+        </button>
+        <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()" style="display:none;">
+          Nächste Aussage →
+        </button>
+        <button class="btn btn-danger" id="btnResult" onclick="showResult()" style="display:none;">
+          Auswertung 🏁
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: Result ── -->
+    <div class="game-screen" id="screenResult">
+      <div class="result-screen">
+        <span class="badge badge-red">Das Ergebnis</span>
+        <p style="margin-top: 16px; color: rgba(255,255,255,0.7);">Dein Ex hatte insgesamt...</p>
+        <div class="result-score-big" id="finalScore">0</div>
+        <p style="font-size:1rem; color:rgba(255,255,255,0.6);">von 20 möglichen Red Flags</p>
+        <div class="result-flags" id="finalFlags"></div>
+        <p class="result-verdict" id="finalVerdict"></p>
+
+        <div class="verdict-cards" id="verdictCards"></div>
+
+        <div style="margin-top:40px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="launchConfetti()">🎉 Feiern!</button>
+          <a href="liebesbriefe.html" class="btn btn-gold">Weiter zu Liebesbriefen 💌</a>
+          <button class="btn btn-outline" onclick="resetGame()">Nochmal spielen</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-wrapper -->
+
+  <script src="auth.js"></script>
+  <script src="data/red-flags.js"></script>
+  <script>
+    checkAuth();
+
+    const TOTAL_PLAYERS = 12;
+    let currentIndex = 0;
+    let flagCounts = [];
+    let exAnswers = [];
+    let currentFlagCount = 0;
+    let currentExAnswer = null;
+    let totalScore = 0;
+
+    function startGame() {
+      document.getElementById('screenIntro').classList.remove('active');
+      document.getElementById('screenGame').classList.add('active');
+      showQuestion(0);
+    }
+
+    function showQuestion(idx) {
+      currentFlagCount = 0;
+      currentExAnswer = null;
+      document.getElementById('flagCount').textContent = '0';
+      document.getElementById('stmtNum').textContent = String(idx + 1).padStart(2,'0') + ' / ' + RED_FLAGS.length;
+      document.getElementById('stmtText').textContent = RED_FLAGS[idx];
+      document.getElementById('progressBadge').textContent = 'Aussage ' + (idx+1) + ' / ' + RED_FLAGS.length;
+      document.getElementById('majorityNum').textContent = Math.floor(TOTAL_PLAYERS / 2);
+
+      document.getElementById('exConfirmSection').style.display = 'none';
+      document.getElementById('btnShowEx').style.display = 'none';
+      document.getElementById('btnNext').style.display = 'none';
+      document.getElementById('btnResult').style.display = 'none';
+      document.getElementById('btnJa').classList.remove('selected');
+      document.getElementById('btnNein').classList.remove('selected');
+
+      // Show "ask dajenne" button when enough flags can be counted
+      setTimeout(() => {
+        document.getElementById('btnShowEx').style.display = 'inline-flex';
+      }, 300);
+    }
+
+    function changeCount(delta) {
+      currentFlagCount = Math.max(0, Math.min(TOTAL_PLAYERS, currentFlagCount + delta));
+      document.getElementById('flagCount').textContent = currentFlagCount;
+    }
+
+    function showExQuestion() {
+      document.getElementById('exConfirmSection').style.display = 'block';
+      document.getElementById('btnShowEx').style.display = 'none';
+      document.getElementById('exConfirmSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function setExAnswer(isYes) {
+      currentExAnswer = isYes;
+      document.getElementById('btnJa').classList.toggle('selected', isYes);
+      document.getElementById('btnNein').classList.toggle('selected', !isYes);
+
+      const isMajority = currentFlagCount > Math.floor(TOTAL_PLAYERS / 2);
+      const isRedFlag = isMajority && isYes;
+
+      if (isRedFlag) {
+        totalScore++;
+        updateScoreBar();
+        showFlagAnimation();
+      }
+
+      flagCounts.push(currentFlagCount);
+      exAnswers.push(isYes);
+
+      const isLast = currentIndex >= RED_FLAGS.length - 1;
+      setTimeout(() => {
+        if (isLast) {
+          document.getElementById('btnResult').style.display = 'inline-flex';
+        } else {
+          document.getElementById('btnNext').style.display = 'inline-flex';
+        }
+      }, isRedFlag ? 1200 : 300);
+    }
+
+    function updateScoreBar() {
+      const pct = (totalScore / RED_FLAGS.length) * 100;
+      document.getElementById('scoreBarFill').style.width = pct + '%';
+      document.getElementById('scoreDisplay').textContent = totalScore;
+    }
+
+    function showFlagAnimation() {
+      const overlay = document.getElementById('flagOverlay');
+      overlay.innerHTML = '<span class="big-flag">🚩</span>';
+      setTimeout(() => { overlay.innerHTML = ''; }, 1300);
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      showQuestion(currentIndex);
+    }
+
+    function showResult() {
+      document.getElementById('screenGame').classList.remove('active');
+      document.getElementById('screenResult').classList.add('active');
+
+      document.getElementById('finalScore').textContent = totalScore;
+
+      const pct = totalScore / RED_FLAGS.length;
+      let flags = '';
+      let verdict = '';
+      let cards = [];
+
+      if (pct <= 0.3) {
+        flags = '🚩';
+        verdict = 'Na gut... nicht perfekt. Aber auch weg ist weg!';
+        cards = [
+          { icon: '✅', text: 'Auch ein paar Red Flags sind Red Flags zu viele.' },
+          { icon: '💪', text: 'Du hast den richtigen Schritt gemacht.' }
+        ];
+      } else if (pct <= 0.6) {
+        flags = '🚩🚩🚩';
+        verdict = 'Eindeutig eine rote Fahne. Gut, dass du gegangen bist!';
+        cards = [
+          { icon: '👀', text: 'Mehr als die Hälfte war eindeutig toxisch.' },
+          { icon: '🎉', text: 'Du bist jetzt frei von diesem Gepäck!' }
+        ];
+      } else if (pct <= 0.85) {
+        flags = '🚩🚩🚩🚩🚩';
+        verdict = 'Massiv toxisch. Du hast dir selbst gerade das größte Geschenk gemacht!';
+        cards = [
+          { icon: '🔥', text: 'Der Typ war eine lebende Red Flag.' },
+          { icon: '👑', text: 'Dajenne, du bist so viel besser dran!' },
+          { icon: '💃', text: 'Zeit, das zu feiern!' }
+        ];
+      } else {
+        flags = '🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩';
+        verdict = 'KOMPLETTE Red Flag. Wir sind so verdammt stolz auf dich, dass du RAUS bist!';
+        cards = [
+          { icon: '🏆', text: 'Das ist kein Kerl. Das ist ein wandelndes Warnsignal.' },
+          { icon: '👸', text: 'Du verdienst das absolute Gegenteil davon.' },
+          { icon: '🥂', text: 'Auf Dajenne – die Queen, die endlich frei ist!' },
+          { icon: '🎆', text: 'Heute Nacht feiern wir DAS!' }
+        ];
+      }
+
+      document.getElementById('finalFlags').textContent = flags;
+      document.getElementById('finalVerdict').textContent = verdict;
+
+      const cardsHTML = cards.map(c =>
+        `<div class="card card-gold text-center">
+          <div style="font-size:2rem; margin-bottom:8px;">${c.icon}</div>
+          <p style="font-size:0.9rem; color:rgba(255,255,255,0.8); line-height:1.5;">${c.text}</p>
+        </div>`
+      ).join('');
+      document.getElementById('verdictCards').innerHTML = cardsHTML;
+
+      launchConfetti();
+    }
+
+    function resetGame() {
+      currentIndex = 0;
+      flagCounts = [];
+      exAnswers = [];
+      currentFlagCount = 0;
+      currentExAnswer = null;
+      totalScore = 0;
+      document.getElementById('scoreBarFill').style.width = '0%';
+      document.getElementById('scoreDisplay').textContent = '0';
+      document.getElementById('screenResult').classList.remove('active');
+      document.getElementById('screenIntro').classList.add('active');
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#FF2D8B','#FFD700','#FF1744','#00F5D4','#FFFFFF'];
+      for (let i = 0; i < 100; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.width = (Math.random() * 10 + 5) + 'px';
+        piece.style.height = piece.style.width;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        piece.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        piece.style.animationDelay = (Math.random() * 1.5) + 's';
+        container.appendChild(piece);
+        piece.addEventListener('animationend', () => piece.remove());
+      }
+    }
+  </script>
+</body>
+</html>
