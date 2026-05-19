@@ -352,9 +352,51 @@ h3 { font-size: clamp(1.2rem, 3vw, 1.8rem); }
   nav, .no-print { display: none !important; }
 }
 
-/* ── Mobile ── */
+/* ── Mobile 600px ── */
 @media (max-width: 600px) {
   .page-wrapper { padding: 16px 12px 160px; }
   .nav-links a { font-size: 0.7rem; padding: 5px 9px; }
   .btn { padding: 12px 20px; font-size: 1rem; }
+  .card { padding: 18px 16px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ── Mobile 480px ── */
+@media (max-width: 480px) {
+  /* Nav: Logo + Links untereinander */
+  .nav-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .nav-links { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .nav-links::-webkit-scrollbar { height: 2px; }
+
+  /* Größere Touch-Targets für Counter-Buttons */
+  .counter-btn { width: 56px !important; height: 56px !important; font-size: 1.6rem !important; }
+
+  /* Slideshow-Buttons volle Breite */
+  .slide-controls { flex-direction: column; }
+  .slide-controls .btn { width: 100%; justify-content: center; }
+  .slide-counter { order: -1; }
+
+  /* Stichwort-Karte weniger Padding */
+  .stichwort-card { padding: 36px 20px !important; }
+  .stichwort-word { font-size: clamp(2.5rem, 12vw, 5rem) !important; }
+
+  /* Statement-Karte (Red Flag) */
+  .statement-card { padding: 28px 18px !important; }
+
+  /* Buttons volle Breite in Nav-Buttons */
+  .nav-buttons { flex-direction: column; align-items: center; }
+  .nav-buttons .btn { width: 100%; max-width: 340px; justify-content: center; }
+
+  /* Ex-Buttons nebeneinander bleiben aber größer */
+  .ex-btn { padding: 14px 20px !important; font-size: 1rem !important; }
+
+  /* Party strip: 2 Spalten */
+  .party-strip { gap: 10px; }
+  .party-strip-item { min-width: 120px; }
+
+  /* Spiele-Grid: 1 Spalte */
+  .spiele-grid { grid-template-columns: 1fr !important; }
+
+  h1 { font-size: clamp(2.2rem, 10vw, 4rem); }
+  h2 { font-size: clamp(1.5rem, 7vw, 2.5rem); }
 }

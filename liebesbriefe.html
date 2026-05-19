@@ -101,10 +101,11 @@
       justify-content: space-between;
       align-items: center;
       font-size: 0.85rem;
+      gap: 8px;
     }
 
-    .submitted-name { color: var(--teal); font-weight: 700; }
-    .submitted-text { color: rgba(255,255,255,0.75); flex: 1; margin: 0 12px; }
+    .submitted-name { color: var(--teal); font-weight: 700; flex-shrink: 0; }
+    .submitted-text { color: rgba(255,255,255,0.75); flex: 1; }
 
     .delete-btn {
       background: none;
@@ -112,15 +113,58 @@
       color: rgba(255,255,255,0.3);
       cursor: pointer;
       font-size: 1.1rem;
-      padding: 4px;
+      padding: 4px 6px;
       transition: color 0.2s;
       flex-shrink: 0;
+      min-width: 32px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .delete-btn:hover { color: var(--red-flag); }
 
+    .list-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-reset-all {
+      background: transparent;
+      border: 1px solid rgba(255,23,68,0.4);
+      color: rgba(255,100,100,0.8);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-reset-all:hover {
+      background: rgba(255,23,68,0.15);
+      border-color: var(--red-flag);
+      color: var(--red-flag);
+    }
+
+    /* Status indicator */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-dot.connected { background: #4CAF50; box-shadow: 0 0 6px rgba(76,175,80,0.6); }
+    .status-dot.disconnected { background: #FF5252; }
+    .status-dot.loading { background: var(--gold); animation: pulse-glow 1s infinite; }
+
     /* ── Slideshow-Tab ── */
     .slideshow-wrapper {
-      position: relative;
       max-width: 700px;
       margin: 0 auto;
     }
@@ -141,16 +185,8 @@
       box-shadow: var(--glow-pink), 0 20px 60px rgba(0,0,0,0.4);
     }
 
-    .slide-icon {
-      font-size: 3rem;
-      margin-bottom: 16px;
-    }
-
-    .slide-prefix {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 8px;
-    }
+    .slide-icon { font-size: 3rem; margin-bottom: 16px; }
+    .slide-prefix { font-size: 0.95rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
 
     .slide-satz {
       font-family: 'Dancing Script', cursive;
@@ -199,7 +235,6 @@
       transition: background 0.3s;
       cursor: pointer;
     }
-
     .dot.active { background: var(--pink); }
 
     .empty-state {
@@ -207,7 +242,6 @@
       padding: 60px 24px;
       color: rgba(255,255,255,0.4);
     }
-
     .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
   </style>
 </head>
@@ -220,7 +254,6 @@
         <a href="red-flag.html">🚩 Red Flag</a>
         <a href="liebesbriefe.html" class="active">💌 Liebesbriefe</a>
         <a href="glow-up.html">✨ Glow-Up</a>
-        <a href="bingo.html">🎱 Bingo</a>
         <a href="wuensche.html">🌟 Wünsche</a>
       </div>
     </div>
@@ -234,6 +267,10 @@
       <h1 class="mt-8 gradient-text">Liebesbriefe</h1>
       <div class="divider"></div>
       <p>Jede Freundin vervollständigt einen Satz — dann Slideshow für Dajenne.</p>
+      <p style="margin-top:8px; font-size:0.8rem; color:rgba(255,255,255,0.4);">
+        <span class="status-dot loading" id="statusDot"></span>
+        <span id="statusText">Verbinde mit Datenbank...</span>
+      </p>
     </div>
 
     <!-- Tabs -->
@@ -256,20 +293,20 @@
             <p class="sentence-prefix">"Du bist besser dran ohne ihn, weil..."</p>
             <textarea class="form-input" id="inputSatz" placeholder="...du jetzt wieder so viel heller strahlst." maxlength="300"></textarea>
           </div>
-          <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="addBrief()">
+          <button class="btn btn-primary" id="submitBtn" style="width:100%; justify-content:center;" onclick="addBrief()">
             Absenden 💌
           </button>
         </div>
       </div>
 
-      <!-- Submitted list -->
       <div id="submittedList" class="submitted-list"></div>
 
-      <div style="text-align:center; margin-top: 32px;">
-        <p style="font-size:0.8rem; color:rgba(255,255,255,0.4);">
-          Alle Einträge werden lokal auf diesem Gerät gespeichert.
-        </p>
-        <button class="btn btn-outline mt-16" style="font-size:0.85rem;" onclick="showTab('slide')">
+      <div class="list-actions" id="listActions" style="display:none;">
+        <button class="btn-reset-all" onclick="resetAll()">🗑️ Alle Einträge löschen</button>
+      </div>
+
+      <div style="text-align:center; margin-top: 24px;">
+        <button class="btn btn-outline" style="font-size:0.85rem;" onclick="showTab('slide')">
           Slideshow starten ▶️
         </button>
       </div>
@@ -285,7 +322,6 @@
           <button class="btn btn-primary" id="btnNext" onclick="nextSlide()">Weiter →</button>
         </div>
         <div class="progress-dots" id="progressDots"></div>
-
         <div style="text-align:center; margin-top:32px;">
           <a href="glow-up.html" class="btn btn-gold">Weiter zu Glow-Up Wall ✨</a>
         </div>
@@ -294,77 +330,107 @@
   </div>
 
   <script src="auth.js"></script>
-  <script>
+  <script type="module">
+    import { db, ref, push, onValue, remove, get } from './firebase-config.js';
+
     checkAuth();
 
-    const STORAGE_KEY = 'wbqd_liebesbriefe';
+    const DB_PATH = 'wbqd/liebesbriefe';
+    let briefe = [];
     let currentSlide = 0;
+    let activeTab = 'input';
 
-    function loadBriefe() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      } catch { return []; }
+    // ── Realtime listener ──
+    const briefeRef = ref(db, DB_PATH);
+    onValue(briefeRef, (snapshot) => {
+      briefe = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          briefe.push({ id: child.key, ...child.val() });
+        });
+        briefe.sort((a, b) => a.timestamp - b.timestamp);
+      }
+      setStatus('connected', briefe.length + ' Brief' + (briefe.length !== 1 ? 'e' : '') + ' gespeichert');
+      renderSubmittedList();
+      if (activeTab === 'slide') renderSlideshow();
+    }, (error) => {
+      setStatus('disconnected', 'Keine Verbindung zur Datenbank');
+    });
+
+    setStatus('loading', 'Verbinde...');
+
+    function setStatus(state, text) {
+      const dot = document.getElementById('statusDot');
+      dot.className = 'status-dot ' + state;
+      document.getElementById('statusText').textContent = text;
     }
 
-    function saveBriefe(list) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    }
-
-    function addBrief() {
+    // ── Add brief ──
+    window.addBrief = async function() {
       const name = document.getElementById('inputName').value.trim();
       const satz = document.getElementById('inputSatz').value.trim();
       if (!name) { alert('Bitte deinen Namen eingeben!'); return; }
       if (!satz) { alert('Bitte deinen Satz vervollständigen!'); return; }
 
-      const briefe = loadBriefe();
-      briefe.push({ name, satz, id: Date.now() });
-      saveBriefe(briefe);
-
-      document.getElementById('inputName').value = '';
-      document.getElementById('inputSatz').value = '';
-      renderSubmittedList();
-
-      // Kurze Bestätigung
-      const btn = document.querySelector('.btn-primary');
-      const orig = btn.innerHTML;
-      btn.innerHTML = '✅ Gespeichert!';
+      const btn = document.getElementById('submitBtn');
+      btn.innerHTML = '⏳ Speichern...';
       btn.disabled = true;
-      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 1500);
-    }
 
-    function deleteBrief(id) {
-      const briefe = loadBriefe().filter(b => b.id !== id);
-      saveBriefe(briefe);
-      renderSubmittedList();
-    }
+      try {
+        await push(ref(db, DB_PATH), { name, satz, timestamp: Date.now() });
+        document.getElementById('inputName').value = '';
+        document.getElementById('inputSatz').value = '';
+        btn.innerHTML = '✅ Gespeichert!';
+        setTimeout(() => { btn.innerHTML = 'Absenden 💌'; btn.disabled = false; }, 1500);
+      } catch (e) {
+        btn.innerHTML = 'Absenden 💌';
+        btn.disabled = false;
+        alert('Fehler beim Speichern. Bitte nochmal versuchen.');
+      }
+    };
 
+    // ── Delete single ──
+    window.deleteBrief = async function(id) {
+      await remove(ref(db, DB_PATH + '/' + id));
+    };
+
+    // ── Reset all ──
+    window.resetAll = async function() {
+      if (!confirm('Wirklich ALLE Liebesbriefe löschen? Das kann nicht rückgängig gemacht werden!')) return;
+      await remove(ref(db, DB_PATH));
+    };
+
+    // ── Render list ──
     function renderSubmittedList() {
-      const briefe = loadBriefe();
       const el = document.getElementById('submittedList');
+      const actions = document.getElementById('listActions');
       if (briefe.length === 0) {
         el.innerHTML = '';
+        actions.style.display = 'none';
         return;
       }
-      el.innerHTML = `<p style="text-align:center; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">${briefe.length} Brief${briefe.length !== 1 ? 'e' : ''} gespeichert</p>` +
-        briefe.map(b => `
-          <div class="submitted-item">
-            <span class="submitted-name">${b.name}</span>
-            <span class="submitted-text">...${b.satz}</span>
-            <button class="delete-btn" onclick="deleteBrief(${b.id})" title="Löschen">✕</button>
-          </div>
-        `).join('');
+      actions.style.display = 'flex';
+      el.innerHTML = briefe.map(b => `
+        <div class="submitted-item">
+          <span class="submitted-name">${b.name}</span>
+          <span class="submitted-text">...${b.satz}</span>
+          <button class="delete-btn" onclick="deleteBrief('${b.id}')" title="Löschen">✕</button>
+        </div>
+      `).join('');
     }
 
-    function showTab(tab) {
+    // ── Tab switching ──
+    window.showTab = function(tab) {
+      activeTab = tab;
       document.getElementById('tabContentInput').style.display = tab === 'input' ? 'block' : 'none';
       document.getElementById('tabContentSlide').style.display = tab === 'slide' ? 'block' : 'none';
       document.getElementById('tabInput').classList.toggle('active', tab === 'input');
       document.getElementById('tabSlide').classList.toggle('active', tab === 'slide');
       if (tab === 'slide') renderSlideshow();
-    }
+    };
 
+    // ── Slideshow ──
     function renderSlideshow() {
-      const briefe = loadBriefe();
       const area = document.getElementById('slideshowArea');
       const dots = document.getElementById('progressDots');
 
@@ -374,6 +440,8 @@
         document.getElementById('slideCounter').textContent = '0 / 0';
         return;
       }
+
+      if (currentSlide >= briefe.length) currentSlide = briefe.length - 1;
 
       area.innerHTML = briefe.map((b, i) => `
         <div class="slide ${i === currentSlide ? 'active' : ''}" id="slide-${i}">
@@ -390,35 +458,31 @@
         `<div class="dot ${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></div>`
       ).join('');
 
-      updateSlideCounter(briefe.length);
+      updateSlideCounter();
     }
 
-    function updateSlideCounter(total) {
-      document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + total;
+    function updateSlideCounter() {
+      document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + briefe.length;
     }
 
-    function goToSlide(idx) {
-      const briefe = loadBriefe();
+    window.goToSlide = function(idx) {
       document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
       currentSlide = idx;
       const s = document.getElementById('slide-' + idx);
-      if (s) { s.classList.add('active'); }
+      if (s) s.classList.add('active');
       const dotEls = document.querySelectorAll('.dot');
       if (dotEls[idx]) dotEls[idx].classList.add('active');
-      updateSlideCounter(briefe.length);
-    }
+      updateSlideCounter();
+    };
 
-    function nextSlide() {
-      const briefe = loadBriefe();
+    window.nextSlide = function() {
       if (currentSlide < briefe.length - 1) goToSlide(currentSlide + 1);
-    }
+    };
 
-    function prevSlide() {
+    window.prevSlide = function() {
       if (currentSlide > 0) goToSlide(currentSlide - 1);
-    }
-
-    renderSubmittedList();
+    };
   </script>
 </body>
 </html>
