@@ -1,4 +1,4 @@
-const AUTH_PASSWORD = "Byebye";
+const AUTH_PASSWORD = "byebye";
 const AUTH_KEY = "wbqd_auth";
 
 function checkAuth() {
